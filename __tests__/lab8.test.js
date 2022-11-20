@@ -76,13 +76,14 @@ describe('Basic user flow for Website', () => {
 
            for(let i = 0 ; i < prodItems.length; i ++){
            var product = prodItems[i];
-           var sRoot = await getProperty("ShadowRoot");  
-           var button = await product.$$('button');
+           var shadow = await product.getProperty("ShadowRoot");  
+           var button = await shadow.$$('button');
            button.click();
 
            }
-           const innerText = cart-count.getProperty('cart-count');
-           expect(innerText).toBe(20));
+           let object = page.$('cart-count');
+           const innerText = object.getProperty('innerText');
+           expect(innerText).toBe(20);
   }, 10000);
 
   // Check to make sure that after you reload the page it remembers all of the items in your cart
@@ -100,13 +101,14 @@ describe('Basic user flow for Website', () => {
       var shadow = await getProperty("ShadowRoot");  
       //count++;
       var button = await shadow.$$('button');
-      const innerText = button.getProperty('innerText');
+      const innerText =  await button.getProperty('innerText');
       expect(innerText).toBe("Remove from Cart")
       }
       //expect(count).toBe(20);
 
-      const count = cart-count.getProperty('cart-count');
-      expect(count).toBe(20);
+      let object = page.$('cart-count');
+      const innerText = object.getProperty('innerText');
+      expect(innerText).toBe(20);
 
     }, 10000);
 
@@ -115,7 +117,8 @@ describe('Basic user flow for Website', () => {
     // TODO - Step 5
     // At this point he item 'cart' in localStorage should be 
     // '[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]', check to make sure it is
-    
+    const cart = localStorage.getItem('cart');
+    expect(cart).toBe('[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]');
   });
 
   // Checking to make sure that if you remove all of the items from the cart that the cart
@@ -125,6 +128,18 @@ describe('Basic user flow for Website', () => {
     // TODO - Step 6
     // Go through and click "Remove from Cart" on every single <product-item>, just like above.
     // Once you have, check to make sure that #cart-count is now 0
+    const prodItems = await page.$$('product-item');
+
+           for(let i = 0 ; i < prodItems.length; i ++){
+           var product = prodItems[i];
+           var sRoot = await getProperty("ShadowRoot");  
+           var button = await product.$$('button');
+           button.click();
+
+           }
+           let object = page.$('cart-count');
+           const innerText = object.getProperty('innerText');
+           expect(innerText).toBe(0);
   }, 10000);
 
   // Checking to make sure that it remembers us removing everything from the cart
@@ -135,6 +150,22 @@ describe('Basic user flow for Website', () => {
     // Reload the page once more, then go through each <product-item> to make sure that it has remembered nothing
     // is in the cart - do this by checking the text on the buttons so that they should say "Add to Cart".
     // Also check to make sure that #cart-count is still 0
+    await page.reload();
+
+    const prodItems = await page.$$('product-item');
+     for(let i = 0 ; i < prodItems.length; i ++){
+      var product = prodItems[i];
+      var shadow = await getProperty("ShadowRoot");  
+      //count++;
+      var button = await shadow.$$('button');
+      const innerText =  await button.getProperty('innerText');
+      expect(innerText).toBe("Add to Cart")
+      }
+      //expect(count).toBe(20);
+
+      let object = page.$('cart-count');
+           const innerText = object.getProperty('innerText');
+           expect(innerText).toBe(0);
   }, 10000);
 
   // Checking to make sure that localStorage for the cart is as we'd expect for the
@@ -143,5 +174,7 @@ describe('Basic user flow for Website', () => {
     console.log('Checking the localStorage...');
     // TODO - Step 8
     // At this point he item 'cart' in localStorage should be '[]', check to make sure it is
+    const cart = localStorage.getItem('cart');
+    expect(cart).toBe('[]');
   });
 });
