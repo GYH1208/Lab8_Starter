@@ -25,7 +25,7 @@ describe('Basic user flow for Website', () => {
     const prodItems = await page.$$('product-item');
     console.log(`Checking product item 1/${prodItems.length}`);
     // Grab the .data property of <product-items> to grab all of the json data stored inside
-    for(let i = 0; i < prodItems.length() ; i ++){
+    for(let i = 0; i < prodItems.length ; i ++){
     data = await prodItems[i].getProperty('data');
     // Convert that property to JSON
     plainValue = await data.jsonValue();
@@ -77,7 +77,7 @@ describe('Basic user flow for Website', () => {
            for(let i = 0 ; i < prodItems.length; i ++){
            var product = prodItems[i];
            var shadow = await product.getProperty("ShadowRoot");  
-           var button = await shadow.$$('button');
+           var button = await shadow.waitFors('button');
            button.click();
 
            }
@@ -98,7 +98,7 @@ describe('Basic user flow for Website', () => {
      const prodItems = await page.$$('product-item');
      for(let i = 0 ; i < prodItems.length; i ++){
       var product = prodItems[i];
-      var shadow = await getProperty("ShadowRoot");  
+      var shadow = await product.getProperty("ShadowRoot");  
       //count++;
       var button = await shadow.$$('button');
       const innerText =  await button.getProperty('innerText');
@@ -117,7 +117,7 @@ describe('Basic user flow for Website', () => {
     // TODO - Step 5
     // At this point he item 'cart' in localStorage should be 
     // '[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]', check to make sure it is
-    const cart = localStorage.getItem('cart');
+    const cart = page.localStorage.getItem('cart');
     expect(cart).toBe('[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]');
   });
 
@@ -132,8 +132,8 @@ describe('Basic user flow for Website', () => {
 
            for(let i = 0 ; i < prodItems.length; i ++){
            var product = prodItems[i];
-           var sRoot = await getProperty("ShadowRoot");  
-           var button = await product.$$('button');
+           var sRoot = await product.getProperty("ShadowRoot");  
+           var button = await sRoot.$$('button');
            button.click();
 
            }
@@ -174,7 +174,7 @@ describe('Basic user flow for Website', () => {
     console.log('Checking the localStorage...');
     // TODO - Step 8
     // At this point he item 'cart' in localStorage should be '[]', check to make sure it is
-    const cart = localStorage.getItem('cart');
+    const cart = page.localStorage.getItem('cart');
     expect(cart).toBe('[]');
   });
 });
